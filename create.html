@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: wheat;
+            font-family:Arial, Helvetica, sans-serif
+        }
+        .a{
+            width: 20vw;
+            height: 20vh;
+            background-color: crimson;
+            border-radius: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .a:hover{
+            background-color: whitesmoke;
+        }
+        .answers{
+            display: flex;
+            gap: 1vw;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20vh;
+        }
+
+        #question{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="questionDiv" style="display: none;">
+        <h1 id="question">Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quasi, quia non, repellat numquam facere tempore suscipit modi incidunt cupiditate sapiente totam aspernatur laboriosam possimus vero perspiciatis harum debitis dicta?</h1>
+        <div class="answers">
+            <div class="a" id="a1">1</div>
+            <div class="a" id="a2">2</div>
+            <div class="a" id="a3">3</div>
+            <div class="a" id="a4">4</div>
+        </div> 
+    </div>
+
+    <div id="waitingForPlayer" style="display: none;">
+        <span id="roomId"></span>
+    </div>
+
+    <div id="createDiv">
+        <input type="number" id="questionAmount">
+        <button id="createGame">Create game</button>
+    </div>
+    
+
+    <script type="module">
+        import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+      
+        const menager = new Manager(window.location.host);
+
+        const socket = menager.socket("/");
+        
+        socket.on("connect",() => {
+            console.log("Connected!");
+        });
+
+
+        const questionAmount = document.getElementById("questionAmount");
+        document.getElementById("createGame").addEventListener("click", () => {
+            socket.emit("createGame", Number(questionAmount.value));
+        });
+
+        let room = -1;
+        socket.on("gameCreated", (roomId) => {
+            document.getElementById("createDiv").style.display = "none";
+            document.getElementById("waitingForPlayer").style.display = "block";
+            document.getElementById("roomId").textContent = roomId;
+        });
+
+        socket.on("startGame", ()=>{
+            document.getElementById("waitingForPlayer").style.display = "none";
+            document.getElementById("questionDiv").style.display = "block";
+        });
+        
+        socket.on("endGame", (statusCode)=>{
+            if(statusCode == 1){
+                document.getElementById("createDiv").style.display = "block";
+                document.getElementById("questionDiv").style.display = "none";
+                alert("Other player disconected");
+            }
+        });
+    </script>
+</body>
+</html>
