@@ -2,6 +2,38 @@ import { createServer } from 'http';
 import { readFile } from 'fs';
 import express from 'express';
 import { Server } from 'socket.io'
+import mariadb from 'mariadb';
+
+const pool = mariadb.createPool({
+    host: '127.0.0.1',
+    user: 'root',
+    password: '',
+    database: 'quiz'
+});
+
+async function getQuestions(numberOfQuestions) {
+    let conn;
+    try{
+        conn = await pool.getConnection();
+        let res = await conn.query("SELECT * FROM questions");
+        conn.release();
+        if(res.length < numberOfQuestions){
+            return [2];
+        }
+        let questions = [];
+        let number;
+        while(questions.length != numberOfQuestions){
+            number = Math.floor(Math.random() * res.length);
+            questions.push(res[number]);
+            res.splice(number,1);
+        }
+        return [0,questions];
+    }
+    catch (err) {
+        console.log('not connected due to error: ' + err);
+        return [1];
+    }
+}
 
 const app = express();
 
@@ -49,24 +81,35 @@ const io = new Server(httpServer, {});
 let games = [];
 
 io.on("connect", (socket) => {
-    socket.on("createGame", (questionNumber) => {
-        if(socket.rooms.size == 1){
-            let roomNumber = Math.floor(Math.random() * 9999);
-            let roomUsed = true;
-            while(roomUsed){
-                roomUsed = false;
-                games.forEach((value) => {
-                    if(value.room === roomNumber){
-                        roomUsed = true;
-                    }
-                });
-            }
-            games.push(
-                {room:roomNumber, player2:false, qNumber:questionNumber, questions:[]}
-            );
-            socket.join(roomNumber);
-            socket.emit("gameCreated",roomNumber);
+    socket.on("createGame",async (questionAmount) => {
+        if(socket.rooms.size != 1){
+            return 0;
         }
+        let questions = await getQuestions(questionAmount);
+        if(questions[0] == 1){ //server error
+            return 0;
+        }
+
+        if(questions[0] == 2){ //Too much questions
+            return 0;
+        }
+        
+        let roomNumber = Math.floor(Math.random() * 9999);
+        let roomUsed = true;
+        while(roomUsed){
+            roomUsed = false;
+            games.forEach((value) => {
+                if(value.room === roomNumber){
+                    roomUsed = true;
+                }
+            });
+        }
+        games.push(
+            {room:roomNumber, player2:false, questions:questions} //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!add corect aswer variable
+        );
+        socket.join(roomNumber);
+        socket.emit("gameCreated",roomNumber);
+        console.log(games);
     });
 
     socket.on("joinGame", (roomId) => { 
