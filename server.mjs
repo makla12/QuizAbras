@@ -74,7 +74,7 @@ app.get('/create', (req, res) => {
 });
 
 const httpServer = createServer(app);
-httpServer.listen(80);
+httpServer.listen(8080);
 
 const io = new Server(httpServer, {});
 
@@ -105,7 +105,7 @@ io.on("connect", (socket) => {
             });
         }
         games.push(
-            {room:roomNumber, player2:false, questions:questions} //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!add corect aswer variable
+            {room:roomNumber, player2:false, questions:questions, questionNum: 0} //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!add corect answer variable to questions
         );
         socket.join(roomNumber);
         socket.emit("gameCreated",roomNumber);
