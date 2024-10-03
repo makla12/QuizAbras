@@ -4,93 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        body{
-            background-color: wheat;
-            font-family:Arial, Helvetica, sans-serif
-        }
-        .a{
-            width: 20vw;
-            height: 20vh;
-            background-color: crimson;
-            border-radius: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .a:hover{
-            background-color: whitesmoke;
-        }
-        .answers{
-            display: flex;
-            gap: 1vw;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 20vh;
-        }
-
-        #question{
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="questionDiv" style="display: none;">
-        <h1 id="question">Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quasi, quia non, repellat numquam facere tempore suscipit modi incidunt cupiditate sapiente totam aspernatur laboriosam possimus vero perspiciatis harum debitis dicta?</h1>
+    <div id="questionDiv" class="section flexCenter" style="display: none;">
+        <div id="timeBarDiv">
+            <div id="timeBar"></div>
+            <span id="time" style="z-index: 3;">20</span>
+        </div>
+        <div class="banner">
+            <h1 id="question">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur</h1>
+        </div>
         <div class="answers">
-            <div class="a" id="a1">1</div>
-            <div class="a" id="a2">2</div>
-            <div class="a" id="a3">3</div>
-            <div class="a" id="a4">4</div>
+            <div class="a" id="a1">2020</div>
+            <div class="a" id="a2">2021</div>
+            <div class="a" id="a3">2023</div>
+            <div class="a" id="a4">2024</div>
         </div> 
+    </div>
+
+    <div id="score">
+        <div class="section flexCenter" style="width: 20vw;">
+            <h1>Player 1</h1>
+            <span style="font-size: xx-large; color: red;">0</span>
+        </div>
+        <div class="section flexCenter" style="width: 20vw;">
+            <h1>Player 2</h1>
+            <span style="font-size: xx-large; color: green;">0</span>
+        </div>
     </div>
 
     <div id="joinDiv">
         <input type="number" id="roomId">
         <button id="joinGame">Join game</button>
     </div>
-
-    <script type="module">
-        import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-      
-        const menager = new Manager(window.location.host);
-
-        const socket = menager.socket("/");
-        
-        socket.on("connect",() => {
-            console.log("Connected!");
-        });
-
-        const roomId = document.getElementById("roomId");
-        document.getElementById("joinGame").addEventListener("click" ,()=>{
-            socket.emit("joinGame",Number(roomId.value));
-        });
-
-        socket.on("gameJoined", (statusCode) => {
-            if(statusCode == 0){
-                console.log("Room joined");
-            }
-            else if(statusCode == 1){
-                console.log("Room not found");
-            }
-
-            else if(statusCode == 2){
-                console.log("Room occupied");
-            }
-        });
-
-        socket.on("startGame", ()=>{
-            document.getElementById("joinDiv").style.display = "none";
-            document.getElementById("questionDiv").style.display = "block";
-        })
-        
-        socket.on("endGame", (statusCode)=>{
-            if(statusCode == 1){
-                document.getElementById("joinDiv").style.display = "block";
-                document.getElementById("questionDiv").style.display = "none";
-                alert("Other player disconected");
-            }
-        });
-    </script>
+    
+    <script type="module" src="join.js"></script>
 </body>
 </html>
