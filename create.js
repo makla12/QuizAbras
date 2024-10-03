@@ -62,6 +62,10 @@ aButtons.forEach(value => {
         aButtons.forEach(value => {
             value.className = "aClicked";
         })
-        socket.emit("selectAnswerP1",aId);
+        socket.emit("selectAnswerP1",aId - 1);
     });
+});
+
+socket.on("selectedAnswer", (corA)=>{
+    document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
 });

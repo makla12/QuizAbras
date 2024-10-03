@@ -44,7 +44,28 @@ const startGame = () => {
         score.style.display = "none";
         score.style.animationName = "";
     }, 2500 + 1500);
-}
+};
+
+const endGame = (corA,p1score,p2score) => {
+    stopTime();
+    document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
+    document.getElementById("p1scoreEnd").innerHTML = p1score;
+    document.getElementById("p2scoreEnd").innerHTML = p2score;
+    setTimeout(()=>{
+        questionDiv.style.animationTimingFunction = "cubic-bezier(0.36, 0, 0.66, -0.56)";
+        questionDiv.style.animationName = "endQuestion";
+    },2000);
+    setTimeout(()=>{
+        questionDiv.style.animationName = "";
+        questionDiv.style.display = "none";
+    },2000 + 1500);
+
+    setTimeout(() => {
+        getElementById("end").style.display = "flex";
+        getElementById("end").style.animationName = "scoreIn";
+    }, 2000 + 1500 + 1500);
+};
+
 const startQuestion = (question) => {
     document.getElementById("question").innerHTML = question[0];
     document.getElementById("a1").innerHTML = question[1][0];
@@ -53,16 +74,18 @@ const startQuestion = (question) => {
     document.getElementById("a4").innerHTML = question[1][3];
 
     questionDiv.style.display = "flex";
+    questionDiv.style.animationTimingFunction = "cubic-bezier(0.34, 1.56, 0.64, 1)";
     questionDiv.style.animationName = "startQuestion";
     startTime();
-}
+};
 const endQuestion = (corA,roundNum,p1score,p2score) => {
     stopTime();
     document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
     document.getElementById("p1score").innerHTML = p1score;
     document.getElementById("p2score").innerHTML = p2score;
-    document.getElementById("round").innerHTML = roundNum;
+    document.getElementById("round").innerHTML = roundNum + 2;
     setTimeout(()=>{
+        questionDiv.style.animationTimingFunction = "cubic-bezier(0.36, 0, 0.66, -0.56)";
         questionDiv.style.animationName = "endQuestion";
     },2000);
     setTimeout(()=>{
@@ -83,7 +106,7 @@ const endQuestion = (corA,roundNum,p1score,p2score) => {
         score.style.display = "none";
         score.style.animationName = "";
     }, 2500 + 2000 + 1500 + 1500 + 1500);
-}
+};
 
 
-export {startTime, stopTime, startGame, startQuestion, endQuestion};
+export {startTime, stopTime, startGame,endGame, startQuestion, endQuestion};

@@ -43,8 +43,9 @@ socket.on("endGame", (statusCode)=>{
 socket.on("startQuestion",(question)=>{
     aSelected = false;
     aButtons.forEach((value)=>{
+        console.log(1);
         value.className = "a";
-        value.backgroundColor = "#488efe";
+        value.style.backgroundColor = "";
     })
     startQuestion(question);
 });
@@ -68,6 +69,10 @@ aButtons.forEach(value => {
         aButtons.forEach(value => {
             value.className = "aClicked";
         })
-        socket.emit("selectAnswerP2",aId);
+        socket.emit("selectAnswerP2",aId - 1);
     });
+});
+
+socket.on("selectedAnswer", (corA)=>{
+    document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
 });
