@@ -3,6 +3,10 @@ import { readFile } from 'fs';
 import express from 'express';
 import { Server } from 'socket.io'
 import mariadb from 'mariadb';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const pool = mariadb.createPool({
     host: '127.0.0.1',
@@ -36,6 +40,7 @@ async function getQuestions(numberOfQuestions) {
 }
 
 const app = express();
+app.use(express.static(__dirname));
 
 app.get("/sources/:file", (req, res) => {
     readFile(`./sources/${req.params.file}`,(err, file) => {

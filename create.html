@@ -4,121 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: #75dfff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        color: #333;
-        overflow: hidden;
-    }
-    .section {
-        text-align: center;
-        background-color: rgb(235, 235, 235);
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-        border-radius: 20px;
-        padding: 40px 20px;
-        width: 80vw;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2vh;
-    }
-    
-    .banner {
-        background-color: #3b82f6;
-        padding: 30px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-    }
-    
-    .banner h1 {
-        color: white;
-        font-size: 2.5rem;
-        font-weight: 600;
-    }
-
-    #timeBarDiv{
-        width: 70vw;
-        background-color: black;
-        height: 5vh;
-        border-radius: 20px;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1;
-    }
-
-    #timeBar{
-        width: 70vw;
-        background-color: red;
-        height: 5vh;
-        border-radius: 20px;
-        position: absolute;
-        z-index: 2;
-    }
-
-    .answers{
-        width: 70vw;
-        display: flex;
-        row-gap: 5vh;
-        column-gap: 2vw;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .a{
-        background-color: #488efe;
-        color: white;
-        padding: 30px;
-        border-radius: 10px;
-        border: 2px solid #333;
-        cursor: pointer;
-    }
-
-    .a:hover{
-        background-color: #2c7dff;
-    }
-    
-    @keyframes startQuestion {
-        0%{transform: scale(0);}
-        100%{transform: scale(1);}
-    }
-    #questionDiv{
-        animation-name: startQuestion;
-        animation-duration: 1.5s;
-        animation-iteration-count: 1;
-        animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes scoreIn {
-        0%{transform:translateY(-60vh)}
-        100%{transform:translateY(0)}
-    }
-    @keyframes scoreOut {
-        0%{transform:translateY(0)}
-        100%{transform:translateY(70vh)}
-    }
-    #score{
-        display: flex;
-        gap: 20vw;
-        animation-duration: 1.5s;
-        animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
-    }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="questionDiv" class="section" >
+    <div id="questionDiv" class="section flexCenter" style="width: 80vw;">
         <div id="timeBarDiv">
             <div id="timeBar"></div>
             <span id="time" style="z-index: 3;">20</span>
@@ -135,11 +24,11 @@
     </div>
 
     <div id="score" style="display: none;">
-        <div class="section" style="width: 20vw;">
+        <div class="section flexCenter" style="width: 20vw;">
             <h1>Player 1</h1>
             <span style="font-size: xx-large; color: green;">0</span>
         </div>
-        <div class="section" style="width: 20vw;">
+        <div class="section flexCenter" style="width: 20vw;">
             <h1>Player 2</h1>
             <span style="font-size: xx-large; color: red;">0</span>
         </div>
@@ -154,69 +43,6 @@
         <button id="createGame">Create game</button>
     </div>
 
-    <script type="module">
-        const timeBar = document.getElementById("timeBar");
-        const time = document.getElementById("time");
-        let timeI;
-        let timeBarI;
-        let timeBarTimeout;
-        const startTime = () => {
-            time.innerHTML = "20";
-            timeBar.style.width = "70vw";
-            timeI = setInterval(()=>{
-                time.innerHTML = Number(time.innerHTML) - 1;
-            },1000);
-            let timeBarW;
-
-            timeBarI = setInterval(() => {
-                timeBarW = timeBar.style.width;
-                timeBar.style.width = Number(timeBarW.substring(0, timeBarW.length - 2)) - 0.035 + "vw";
-            },10);
-            timeBarTimeout = setTimeout(()=>{
-                clearInterval(timeI);
-                timeBar.style.width = "0vw";
-                clearInterval(timeBarI);
-            },20000)
-        };
-
-        const stopTime = () => {
-            clearTimeout(timeBarTimeout);
-            clearInterval(timeI);
-            clearInterval(timeBarI);
-        };
-
-
-        import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-        const menager = new Manager(window.location.host + ":8080");
-        const socket = menager.socket("/");
-        socket.on("connect",() => {
-            console.log("Connected!");
-        });
-
-        const questionAmount = document.getElementById("questionAmount");
-        document.getElementById("createGame").addEventListener("click", () => {
-            socket.emit("createGame", Number(questionAmount.value));
-        });
-
-        let room = -1;
-        socket.on("gameCreated", (roomId) => {
-            document.getElementById("createDiv").style.display = "none";
-            document.getElementById("waitingForPlayer").style.display = "block";
-            document.getElementById("roomId").textContent = roomId;
-        });
-
-        socket.on("startGame", ()=>{
-            document.getElementById("waitingForPlayer").style.display = "none";
-            document.getElementById("questionDiv").style.display = "block";
-        });
-        
-        socket.on("endGame", (statusCode)=>{
-            if(statusCode == 1){
-                document.getElementById("createDiv").style.display = "block";
-                document.getElementById("questionDiv").style.display = "none";
-                alert("Other player disconected");
-            }
-        });
-    </script>
+    <script type="module" src="create.js"></script>
 </body>
 </html>
