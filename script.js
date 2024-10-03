@@ -1,5 +1,8 @@
 const timeBar = document.getElementById("timeBar");
 const time = document.getElementById("time");
+const questionDiv = document.getElementById("questionDiv");
+const score = document.getElementById("score");
+
 let timeI;
 let timeBarI;
 let timeBarTimeout;
@@ -28,4 +31,59 @@ const stopTime = () => {
     clearInterval(timeBarI);
 };
 
-export {startTime, stopTime};
+
+
+const startGame = () => {
+    score.style.display = "flex";
+    score.style.animationName = "scoreIn";
+    setTimeout(() => {
+        score.style.animationName = "scoreOut";
+    }, 2500);
+
+    setTimeout(() => {
+        score.style.display = "none";
+        score.style.animationName = "";
+    }, 2500 + 1500);
+}
+const startQuestion = (question) => {
+    document.getElementById("question").innerHTML = question[0];
+    document.getElementById("a1").innerHTML = question[1][0];
+    document.getElementById("a2").innerHTML = question[1][1];
+    document.getElementById("a3").innerHTML = question[1][2];
+    document.getElementById("a4").innerHTML = question[1][3];
+
+    questionDiv.style.display = "flex";
+    questionDiv.style.animationName = "startQuestion";
+    startTime();
+}
+const endQuestion = (corA,roundNum,p1score,p2score) => {
+    stopTime();
+    document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
+    document.getElementById("p1score").innerHTML = p1score;
+    document.getElementById("p2score").innerHTML = p2score;
+    document.getElementById("round").innerHTML = roundNum;
+    setTimeout(()=>{
+        questionDiv.style.animationName = "endQuestion";
+    },2000);
+    setTimeout(()=>{
+        questionDiv.style.animationName = "";
+        questionDiv.style.display = "none";
+    },2000 + 1500);
+
+    setTimeout(() => {
+        score.style.display = "flex";
+        score.style.animationName = "scoreIn";
+    }, 2000 + 1500 + 1500);
+
+    setTimeout(() => {
+        score.style.animationName = "scoreOut";
+    }, 2500 + 2000 + 1500 + 1500);
+
+    setTimeout(() => {
+        score.style.display = "none";
+        score.style.animationName = "";
+    }, 2500 + 2000 + 1500 + 1500 + 1500);
+}
+
+
+export {startTime, stopTime, startGame, startQuestion, endQuestion};

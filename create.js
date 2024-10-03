@@ -1,7 +1,7 @@
 import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
-import {startTime, stopTime} from "/script.js";
+import {startGame, startQuestion, endQuestion} from "/script.js";
 
 
 socket.on("connect",() => {
@@ -21,14 +21,47 @@ socket.on("gameCreated", (roomId) => {
 });
 
 socket.on("startGame", ()=>{
+    document.getElementById("createDiv").style.display = "none";
     document.getElementById("waitingForPlayer").style.display = "none";
-    document.getElementById("questionDiv").style.display = "block";
+    startGame();
 });
 
 socket.on("endGame", (statusCode)=>{
     if(statusCode == 1){
-        document.getElementById("createDiv").style.display = "block";
-        document.getElementById("questionDiv").style.display = "none";
         alert("Other player disconected");
+        location.reload();
     }
+});
+
+
+socket.on("startQuestion",(question)=>{
+    aSelected = false;
+    aButtons.forEach((value)=>{
+        value.className = "a";
+        value.backgroundColor = "#488efe";
+    })
+    startQuestion(question);
+});
+
+socket.on("endQuestion",(question)=>{
+    endQuestion(question);
+})
+
+
+const aButtons = document.querySelectorAll(".a");
+let aSelected = false;
+
+aButtons.forEach(value => {
+    value.addEventListener("click", ()=>{
+        if(aSelected){
+            return 0;
+        }
+        aSelected = true;
+        const aId = value.id[1];
+        value.style.backgroundColor = "red";
+        aButtons.forEach(value => {
+            value.className = "aClicked";
+        })
+        socket.emit("selectAnswerP1",aId);
+    });
 });
