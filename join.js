@@ -1,7 +1,7 @@
 import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
-import {startGame, startQuestion, endQuestion} from "/script.js";
+import {startGame, startQuestion, endQuestion, endGame} from "/script.js";
 
 
 const roomId = document.getElementById("roomId");
@@ -32,10 +32,25 @@ socket.on("startGame", ()=>{
     document.getElementById("joinDiv").style.display = "none";
     startGame();
 });
-socket.on("endGame", (statusCode)=>{
+socket.on("endGame", (statusCode, arr)=>{
     if(statusCode == 1){
         alert("Other player disconected");
         location.reload();
+    }
+    else if(statusCode == 0){
+        if(arr[2] > arr[1]){
+            document.getElementById("endRes").innerHTML = "YOU WIN";
+            document.getElementById("endRes").style.color = "green";
+        }
+        else if(arr[2] < arr[1]){
+            document.getElementById("endRes").innerHTML = "YOU LOSSE";
+            document.getElementById("endRes").style.color = "red";
+        }
+        else{
+            document.getElementById("endRes").innerHTML = "DRAW";
+            document.getElementById("endRes").style.color = "gray"
+        }
+        endGame(arr[0],arr[1],arr[2]);
     }
 });
 
@@ -43,7 +58,6 @@ socket.on("endGame", (statusCode)=>{
 socket.on("startQuestion",(question)=>{
     aSelected = false;
     aButtons.forEach((value)=>{
-        console.log(1);
         value.className = "a";
         value.style.backgroundColor = "";
     })

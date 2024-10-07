@@ -61,8 +61,8 @@ const endGame = (corA,p1score,p2score) => {
     },2000 + 1500);
 
     setTimeout(() => {
-        getElementById("end").style.display = "flex";
-        getElementById("end").style.animationName = "scoreIn";
+        document.getElementById("end").style.display = "flex";
+        document.getElementById("end").style.animationName = "scoreIn";
     }, 2000 + 1500 + 1500);
 };
 
