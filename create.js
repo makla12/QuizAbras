@@ -1,7 +1,7 @@
 import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
-import {startTime, stopTime} from "/script.js";
+import {startGame, startQuestion, endQuestion, endGame} from "/script.js";
 
 
 socket.on("connect",() => {
@@ -21,14 +21,66 @@ socket.on("gameCreated", (roomId) => {
 });
 
 socket.on("startGame", ()=>{
+    document.getElementById("createDiv").style.display = "none";
     document.getElementById("waitingForPlayer").style.display = "none";
-    document.getElementById("questionDiv").style.display = "block";
+    startGame();
 });
 
-socket.on("endGame", (statusCode)=>{
+socket.on("endGame", (statusCode, arr)=>{
     if(statusCode == 1){
-        document.getElementById("createDiv").style.display = "block";
-        document.getElementById("questionDiv").style.display = "none";
         alert("Other player disconected");
+        location.reload();
     }
+    else if(statusCode == 0){
+        if(arr[1] > arr[2]){
+            document.getElementById("endRes").innerHTML = "YOU WIN";
+            document.getElementById("endRes").style.color = "green";
+        }
+        else if(arr[1] < arr[2]){
+            document.getElementById("endRes").innerHTML = "YOU LOSSE";
+            document.getElementById("endRes").style.color = "red";
+        }
+        else{
+            document.getElementById("endRes").innerHTML = "DRAW";
+            document.getElementById("endRes").style.color = "gray";
+        }
+        endGame(arr[0],arr[1],arr[2]);
+    }
+});
+
+
+socket.on("startQuestion",(question)=>{
+    aSelected = false;
+    aButtons.forEach((value)=>{
+        value.className = "a";
+        value.style.backgroundColor = "";
+    })
+    startQuestion(question);
+});
+
+socket.on("endQuestion",(corA,roundNum,p1score,p2score)=>{
+    endQuestion(corA,roundNum,p1score,p2score);
+});
+
+
+const aButtons = document.querySelectorAll(".a");
+let aSelected = false;
+
+aButtons.forEach(value => {
+    value.addEventListener("click", ()=>{
+        if(aSelected){
+            return 0;
+        }
+        aSelected = true;
+        const aId = value.id[1];
+        value.style.backgroundColor = "red";
+        aButtons.forEach(value => {
+            value.className = "aClicked";
+        })
+        socket.emit("selectAnswerP1",aId - 1);
+    });
+});
+
+socket.on("selectedAnswer", (corA)=>{
+    document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
 });

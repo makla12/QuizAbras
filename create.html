@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="questionDiv" class="section flexCenter" style="width: 80vw;">
+    <div id="questionDiv" class="section flexCenter" style="width: 80vw; display: none;">
         <div id="timeBarDiv">
             <div id="timeBar"></div>
             <span id="time" style="z-index: 3;">20</span>
@@ -24,13 +24,26 @@
     </div>
 
     <div id="score" style="display: none;">
+        <h1>Round <span id="round">1</span></h1>
         <div class="section flexCenter" style="width: 20vw;">
             <h1>Player 1</h1>
-            <span style="font-size: xx-large; color: green;">0</span>
+            <span id="p1score" style="font-size: xx-large; color: green;">0</span>
         </div>
         <div class="section flexCenter" style="width: 20vw;">
             <h1>Player 2</h1>
-            <span style="font-size: xx-large; color: red;">0</span>
+            <span id="p2score" style="font-size: xx-large; color: red;">0</span>
+        </div>
+    </div>
+
+    <div id="end" style="display: none;">
+        <h1><span id="endRes">1</span></h1>
+        <div class="section flexCenter" style="width: 20vw;">
+            <h1>Player 1</h1>
+            <span id="p1scoreEnd" style="font-size: xx-large; color: green;">0</span>
+        </div>
+        <div class="section flexCenter" style="width: 20vw;">
+            <h1>Player 2</h1>
+            <span id="p2scoreEnd" style="font-size: xx-large; color: red;">0</span>
         </div>
     </div>
 
@@ -38,7 +51,7 @@
         <span id="roomId"></span>
     </div>
 
-    <div id="createDiv" style="display: none;">
+    <div id="createDiv">
         <input type="number" id="questionAmount">
         <button id="createGame">Create game</button>
     </div>
