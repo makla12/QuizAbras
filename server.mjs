@@ -19,13 +19,14 @@ async function getQuestions(numberOfQuestions) {
     let conn;
     try{
         conn = await pool.getConnection();
-        let res = await conn.query("SELECT * FROM questions");
+        let res = await conn.query("SELECT * FROM pytania");
         conn.release();
         if(res.length < numberOfQuestions){
             return [2];
         }
         let questions = [];
         let number;
+        console.log(res);
         while(questions.length != numberOfQuestions){
             number = Math.floor(Math.random() * res.length);
             questions.push(res[number]);
