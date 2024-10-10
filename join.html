@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Quiz Abras - join the game!</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,11 +47,16 @@
         </div>
     </div>
 
-    <div id="joinDiv">
-        <input type="number" id="roomId">
-        <button id="joinGame">Join game</button>
+    <div class="section" id="joinSection">
+        <div class="join-banner">
+            <h1>Join the game!</h1>
+            <h4>Ask the creator of the room for the code</h4>
+        </div>
+        <div class="buttons">
+            <input type="number" id="roomId" class="insert roomId-insert" style="font-size: 1.5rem; color: white;  text-shadow: 1px 1px 2px #000000; text-align: center;">
+            <button id="joinGame" class="button joiner-button">Join!</button>
+        </div>
+        <script type="module" src="join.js"></script>
     </div>
-    
-    <script type="module" src="join.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Quiz Abras - create game!</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,15 +47,23 @@
         </div>
     </div>
 
-    <div id="waitingForPlayer" style="display: none;">
-        <span id="roomId"></span>
-    </div>
+    <div class="section" id="createSection">
+        <div id="waitingForPlayer" style="display: none;">
+            <h1>Your Room ID:</h1><br>
+            <span id="roomId"></span>
+        </div>
+        
+        <div id="creatorFirst">
 
-    <div id="createDiv">
-        <input type="number" id="questionAmount">
-        <button id="createGame">Create game</button>
+            <div class="create-banner">
+                <h1>Create a game!</h1>
+            </div>
+            <div class="buttons">
+                <input type="number" id="questionAmount" class="insert qAmount-creator" style="font-size: 1.5rem; color: white;  text-shadow: 1px 1px 2px #000000; text-align: center;">
+                <button id="createGame" class="button creator-button">Create game!</button>
+            </div>
+        </div>
+        <script type="module" src="create.js"></script>
     </div>
-
-    <script type="module" src="create.js"></script>
 </body>
 </html>
