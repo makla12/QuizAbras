@@ -29,12 +29,12 @@ socket.on("gameJoined", (statusCode) => {
 });
 
 socket.on("startGame", ()=>{
-    document.getElementById("joinDiv").style.display = "none";
+    document.getElementById("joinSection").style.display = "none";
     startGame();
 });
 socket.on("endGame", (statusCode, arr)=>{
     if(statusCode == 1){
-        alert("Other player disconected");
+        alert("Other player disconnected");
         location.reload();
     }
     else if(statusCode == 0){
@@ -43,7 +43,7 @@ socket.on("endGame", (statusCode, arr)=>{
             document.getElementById("endRes").style.color = "green";
         }
         else if(arr[2] < arr[1]){
-            document.getElementById("endRes").innerHTML = "YOU LOSSE";
+            document.getElementById("endRes").innerHTML = "YOU LOSE";
             document.getElementById("endRes").style.color = "red";
         }
         else{
