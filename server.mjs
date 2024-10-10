@@ -15,18 +15,23 @@ const pool = mariadb.createPool({
     database: 'quiz'
 });
 
-async function getQuestions(numberOfQuestions) {
+async function getQuestions(numberOfQuestions,questionCategory) {
     let conn;
     try{
         conn = await pool.getConnection();
-        let res = await conn.query("SELECT * FROM pytania");
+        let res;
+        if(questionCategory == 0){
+            res = await conn.query("SELECT * FROM pytania");
+        }
+        else{
+            res = await conn.query("SELECT * FROM pytania WHERE ID_kategorii = ?",[questionCategory]);
+        }
         conn.release();
         if(res.length < numberOfQuestions){
             return [2];
         }
         let questions = [];
         let number;
-        console.log(res);
         while(questions.length != numberOfQuestions){
             number = Math.floor(Math.random() * res.length);
             questions.push(res[number]);
@@ -53,6 +58,15 @@ app.get("/sources/:file", (req, res) => {
 });
 
 app.get('/', (req, res) => {
+    readFile("./index.html", "utf-8", (err, html) => {
+        if(err) {
+            return res.status(500).send("Server internal error");
+        }
+        res.send(html);
+    });
+});
+
+app.get('/index', (req, res) => {
     readFile("./index.html", "utf-8", (err, html) => {
         if(err) {
             return res.status(500).send("Server internal error");
@@ -111,43 +125,19 @@ let games = [
 ];
 
 io.on("connect", (socket) => {
-    socket.on("createGame",async (questionAmount) => {
+    socket.on("createGame",async (questionAmount, questonCategory) => {
         if(socket.rooms.size != 1){
             return 0;
         }
-
-        // let [questionsCode ,questions] = await getQuestions(questionAmount);
-        let questionsCode = 0;
-        let questions = [
-            [
-                [
-                    "Treść pytania 1",
-                    ["odp1","odp2","odb3","odp4"]
-                ],
-                0
-            ],
-
-            [
-                [
-                    "Treść pytania 2",
-                    ["odp1","odp2","odb3","odp4"]
-                ],
-                2
-            ],
-
-            [
-                [
-                    "Treść pytania 3",
-                    ["odp1","odp2","odb3","odp4"]
-                ],
-                1
-            ]
-        ];
+        let [questionsCode ,questions] = await getQuestions(questionAmount, questonCategory);
+        
         if(questionsCode == 1){ //server error
+            socket.emit("error","Failed to create room");
             return 0;
         }
 
         if(questionsCode == 2){ //Too much questions
+            socket.emit("error","Too much questions");
             return 0;
         }
         
@@ -269,18 +259,20 @@ io.on("connect", (socket) => {
         socket.emit("selectedAnswer", games[gameIndex].questions[games[gameIndex].questionNum][1]);
 
         if(games[gameIndex].p1a && games[gameIndex].p2a){
-            endQuestion(gameIndex);
-            clearTimeout(games[gameIndex].qInter);
-            clearTimeout(games[gameIndex].qInter2);
+            if(endQuestion(gameIndex)){
+                clearTimeout(games[gameIndex].qInter);
+                clearTimeout(games[gameIndex].qInter2);
 
-            clearInterval(games[gameIndex].qInter);
-            clearInterval(games[gameIndex].qInter2);
-            games[gameIndex].qInter = setTimeout(() => {
-                startQuestion(gameIndex);
-                games[gameIndex].qInter = setInterval(()=>{startQuestion(gameIndex)} , timeForQuestion + timeBetweenQuestions + timeForScore);
-            }, timeForScore + timeBetweenQuestions);
+                clearInterval(games[gameIndex].qInter);
+                clearInterval(games[gameIndex].qInter2);
+                games[gameIndex].qInter = setTimeout(() => {
+                    startQuestion(gameIndex);
+                    games[gameIndex].qInter = setInterval(()=>{startQuestion(gameIndex)} , timeForQuestion + timeBetweenQuestions + timeForScore);
+                }, timeForScore + timeBetweenQuestions);
+                
+                games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex);}, timeForQuestion + timeBetweenQuestions + timeForScore);
             
-            games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex);}, timeForQuestion + timeBetweenQuestions + timeForScore);
+            }
         }
     });
 });
@@ -298,25 +290,24 @@ const startQuestion = (gameIndex) => {
     }
     games[gameIndex].p1a = false;
     games[gameIndex].p2a = false;
-    console.log(games[gameIndex].questions[games[gameIndex].questionNum][0]);
     io.to(games[gameIndex].room).emit("startQuestion",games[gameIndex].questions[games[gameIndex].questionNum][0]);
 }
 
 const endQuestion = (gameIndex) => {
-    console.log([],games[gameIndex].questions[games[gameIndex].questionNum][1]);
-    
     if(games[gameIndex].questionNum == games[gameIndex].questions.length - 1){
         clearTimeout(games[gameIndex].qInter);
         clearTimeout(games[gameIndex].qInter2);
 
         clearInterval(games[gameIndex].qInter);
         clearInterval(games[gameIndex].qInter2);
-        io.to(games[gameIndex].room).emit("endGame", 0, [games[gameIndex].questions[games[gameIndex].questionNum][1], games[gameIndex].p1score, games[gameIndex].p2score])
-        return 0;
+        io.to(games[gameIndex].room).emit("endGame", 0, [games[gameIndex].questions[games[gameIndex].questionNum][1], games[gameIndex].p1score, games[gameIndex].p2score]);
+        io.in(games[gameIndex].room).socketsLeave(games[gameIndex].room);
+        games.splice(gameIndex,1);
+        return false;
     }
     io.to(games[gameIndex].room).emit("endQuestion",games[gameIndex].questions[games[gameIndex].questionNum][1], games[gameIndex].questionNum, games[gameIndex].p1score, games[gameIndex].p2score);
     games[gameIndex].questionNum++;
-    return 1;
+    return true;
 }
 
 const timeForQuestion = 20000;
