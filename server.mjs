@@ -102,7 +102,7 @@ let games = [
     {room:444,player2:false,questions:[[
                 [
                     "Treść pytania 1",
-                    ["odp1","odp2","odb3","odp4"]
+                    ["odp1","odp2","odp3","odp4"]
                 ],
                 0
             ],
@@ -110,7 +110,7 @@ let games = [
             [
                 [
                     "Treść pytania 2",
-                    ["odp1","odp2","odb3","odp4"]
+                    ["odp1","odp2","odp3","odp4"]
                 ],
                 2
             ],
@@ -118,7 +118,7 @@ let games = [
             [
                 [
                     "Treść pytania 3",
-                    ["odp1","odp2","odb3","odp4"]
+                    ["odp1","odp2","odp3","odp4"]
                 ],
                 1
             ]],questionNum:0,qInter:null,qInter2:null,p1score:0,p2score:0,p1a:false,p2a:false}
@@ -130,7 +130,6 @@ io.on("connect", (socket) => {
             return 0;
         }
         let [questionsCode ,questions] = await getQuestions(questionAmount, questonCategory);
-        
         if(questionsCode == 1){ //server error
             socket.emit("error","Failed to create room");
             return 0;

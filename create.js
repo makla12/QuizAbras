@@ -15,20 +15,19 @@ document.getElementById("createGame").addEventListener("click", () => {
 
 let room = -1;
 socket.on("gameCreated", (roomId) => {
-    document.getElementById("createDiv").style.display = "none";
+    document.getElementById("creatorFirst").style.display = "none";
     document.getElementById("waitingForPlayer").style.display = "block";
     document.getElementById("roomId").textContent = roomId;
 });
 
 socket.on("startGame", ()=>{
-    document.getElementById("createDiv").style.display = "none";
-    document.getElementById("waitingForPlayer").style.display = "none";
+    document.getElementById("createSection").style.display = "none";
     startGame();
 });
 
 socket.on("endGame", (statusCode, arr)=>{
     if(statusCode == 1){
-        alert("Other player disconected");
+        alert("Other player disconnected");
         location.reload();
     }
     else if(statusCode == 0){
@@ -37,7 +36,7 @@ socket.on("endGame", (statusCode, arr)=>{
             document.getElementById("endRes").style.color = "green";
         }
         else if(arr[1] < arr[2]){
-            document.getElementById("endRes").innerHTML = "YOU LOSSE";
+            document.getElementById("endRes").innerHTML = "YOU LOSE";
             document.getElementById("endRes").style.color = "red";
         }
         else{
