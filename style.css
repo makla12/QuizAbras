@@ -21,6 +21,12 @@ body {
     padding: 40px 20px;
     width: 35vw;
 }
+.flexCenter{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+}
 
 .banner {
     background-color: #3b82f6;
@@ -60,16 +66,184 @@ body {
     color: white;
 }
 
-.button:hover {
+.create-button:hover {
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+.join-button:hover {
     transform: translateY(-3px);
     cursor: pointer;
 }
 
-.button:active {
+.create-button:active {
     transform: translateY(0);
     background-color: #2d6a4f;
 }
 
 .join-button:active {
     background-color: #d97706;
+}
+
+#timeBarDiv{
+    width: 70vw;
+    background-color: black;
+    height: 5vh;
+    border-radius: 20px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+#timeBar{
+    width: 70vw;
+    background-color: red;
+    height: 5vh;
+    border-radius: 20px;
+    position: absolute;
+    z-index: 2;
+}
+
+.answers{
+    width: 70vw;
+    display: flex;
+    row-gap: 5vh;
+    column-gap: 2vw;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.a{
+    background-color: #488efe;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid #333;
+    cursor: pointer;
+}
+
+.aClicked{
+    background-color: #488efe;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid #333;
+}
+
+.a:hover{
+    background-color: #2c7dff;
+}
+
+@keyframes startQuestion {
+    0%{transform: scale(0);}
+    100%{transform: scale(1);}
+}
+
+@keyframes endQuestion {
+    0%{transform: scale(1);}
+    100%{transform: scale(0);}
+}
+
+#questionDiv{
+    width: 80vw;
+    position: absolute;
+    animation-name: startQuestion;
+    animation-duration: 1.5s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes scoreIn {
+    0%{transform:translateY(-60vh)}
+    100%{transform:translateY(0)}
+}
+@keyframes scoreOut {
+    0%{transform:translateY(0)}
+    100%{transform:translateY(70vh)}
+}
+#score{
+    position: absolute;
+    display: flex;
+    gap: 20vw;
+    animation-duration: 1.5s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+#end{
+    position: absolute;
+    display: flex;
+    gap: 20vw;
+    animation-duration: 1.5s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+#joinGame {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.roomId-insert {
+    background-color: rgba(200, 200, 200, 150);
+    color: white;
+}
+.roomId-insert:active {
+    background-color: #8a8a8a9c;
+}
+.insert {
+    padding: 20px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 0;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 10px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.join-banner {
+    background-color: #f59e0b;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+.joiner-button {
+    background-color: #34d399;
+    color: white;
+    border: 0;
+}
+.create-banner {
+    background-color: #477eec;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+.qAmount-creator {
+    background-color: rgba(200, 200, 200, 150);
+    color: white;
+}
+.qAmount-creator:active {
+    background-color: #8a8a8a9c;
+}
+.creator-button {
+    background-color: #34d399;
+    color: white;
+    border: 0;
+}
+#roomId {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    text-shadow: 2px 2px 8px #FFFFFF;
 }

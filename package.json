@@ -1,6 +1,21 @@
 {
   "dependencies": {
     "express": "^4.21.0",
+    "mariadb": "^3.3.2",
     "socket.io": "^4.8.0"
-  }
+  },
+  "name": "quizabras",
+  "version": "1.0.0",
+  "main": "server.mjs",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
