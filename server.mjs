@@ -95,41 +95,19 @@ app.get('/create', (req, res) => {
 
 const httpServer = createServer(app);
 httpServer.listen(8080);
+console.log("Server listening on http://localhost:8080");
 
 const io = new Server(httpServer, {});
 
-let games = [
-    {room:444,player2:false,questions:[[
-                [
-                    "Treść pytania 1",
-                    ["odp1","odp2","odp3","odp4"]
-                ],
-                0
-            ],
-
-            [
-                [
-                    "Treść pytania 2",
-                    ["odp1","odp2","odp3","odp4"]
-                ],
-                2
-            ],
-
-            [
-                [
-                    "Treść pytania 3",
-                    ["odp1","odp2","odp3","odp4"]
-                ],
-                1
-            ]],questionNum:0,qInter:null,qInter2:null,p1score:0,p2score:0,p1a:false,p2a:false}
-];
+let games = [];
 
 io.on("connect", (socket) => {
     socket.on("createGame",async (questionAmount, questonCategory) => {
         if(socket.rooms.size != 1){
             return 0;
         }
-        let [questionsCode ,questions] = await getQuestions(questionAmount, questonCategory);
+        let [questionsCode , res] = await getQuestions(questionAmount, questonCategory);
+
         if(questionsCode == 1){ //server error
             socket.emit("error","Failed to create room");
             return 0;
@@ -139,6 +117,17 @@ io.on("connect", (socket) => {
             socket.emit("error","Too much questions");
             return 0;
         }
+
+        let questions = [];
+        res.forEach((value)=>{
+            questions.push([
+                [
+                    value.pytanie,
+                    [value["0"], value["1"], value["2"], value["3"]]
+                ],
+                value.correct
+            ]);
+        });
         
         let roomNumber = Math.floor(Math.random() * 9999);
         let roomUsed = true;
@@ -225,7 +214,7 @@ io.on("connect", (socket) => {
         socket.emit("selectedAnswer", games[gameIndex].questions[games[gameIndex].questionNum][1]);
 
         if(games[gameIndex].p1a && games[gameIndex].p2a){
-            if(endQuestion(gameIndex) == 1){
+            if(endQuestion(gameIndex, 1) == 1){
                 clearTimeout(games[gameIndex].qInter);
                 clearTimeout(games[gameIndex].qInter2);
 
@@ -236,7 +225,7 @@ io.on("connect", (socket) => {
                     games[gameIndex].qInter = setInterval(()=>{startQuestion(gameIndex)} , timeForQuestion + timeBetweenQuestions + timeForScore);
                 }, timeForScore + timeBetweenQuestions);
                 
-                games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex);}, timeForQuestion + timeBetweenQuestions + timeForScore);
+                games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex, 0);}, timeForQuestion + timeBetweenQuestions + timeForScore);
             }
             
         }
@@ -258,7 +247,7 @@ io.on("connect", (socket) => {
         socket.emit("selectedAnswer", games[gameIndex].questions[games[gameIndex].questionNum][1]);
 
         if(games[gameIndex].p1a && games[gameIndex].p2a){
-            if(endQuestion(gameIndex)){
+            if(endQuestion(gameIndex, 1)){
                 clearTimeout(games[gameIndex].qInter);
                 clearTimeout(games[gameIndex].qInter2);
 
@@ -269,7 +258,7 @@ io.on("connect", (socket) => {
                     games[gameIndex].qInter = setInterval(()=>{startQuestion(gameIndex)} , timeForQuestion + timeBetweenQuestions + timeForScore);
                 }, timeForScore + timeBetweenQuestions);
                 
-                games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex);}, timeForQuestion + timeBetweenQuestions + timeForScore);
+                games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex, 0);}, timeForQuestion + timeBetweenQuestions + timeForScore);
             
             }
         }
@@ -292,7 +281,7 @@ const startQuestion = (gameIndex) => {
     io.to(games[gameIndex].room).emit("startQuestion",games[gameIndex].questions[games[gameIndex].questionNum][0]);
 }
 
-const endQuestion = (gameIndex) => {
+const endQuestion = (gameIndex, type) => {
     if(games[gameIndex].questionNum == games[gameIndex].questions.length - 1){
         clearTimeout(games[gameIndex].qInter);
         clearTimeout(games[gameIndex].qInter2);
@@ -304,7 +293,7 @@ const endQuestion = (gameIndex) => {
         games.splice(gameIndex,1);
         return false;
     }
-    io.to(games[gameIndex].room).emit("endQuestion",games[gameIndex].questions[games[gameIndex].questionNum][1], games[gameIndex].questionNum, games[gameIndex].p1score, games[gameIndex].p2score);
+    io.to(games[gameIndex].room).emit("endQuestion", type, games[gameIndex].questions[games[gameIndex].questionNum][1], games[gameIndex].questionNum, games[gameIndex].p1score, games[gameIndex].p2score);
     games[gameIndex].questionNum++;
     return true;
 }
@@ -319,7 +308,7 @@ const startGame = (gameIndex) => {
     }, timeForScore);
 
     games[gameIndex].qInter2 = setTimeout(() => {
-        endQuestion(gameIndex);
-        games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex)} , timeForQuestion + timeBetweenQuestions + timeForScore);
+        endQuestion(gameIndex, 0);
+        games[gameIndex].qInter2 = setInterval(()=>{endQuestion(gameIndex,0)} , timeForQuestion + timeBetweenQuestions + timeForScore);
     }, timeForQuestion + timeForScore);
 }

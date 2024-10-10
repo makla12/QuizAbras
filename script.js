@@ -78,8 +78,10 @@ const startQuestion = (question) => {
     questionDiv.style.animationName = "startQuestion";
     startTime();
 };
-const endQuestion = (corA,roundNum,p1score,p2score) => {
-    stopTime();
+const endQuestion = (type,corA,roundNum,p1score,p2score) => {
+    if(type == 1){
+        stopTime();
+    }
     document.getElementById(`a${corA + 1}`).style.backgroundColor = "green";
     document.getElementById("p1score").innerHTML = p1score;
     document.getElementById("p2score").innerHTML = p2score;

@@ -1,4 +1,4 @@
-import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+import { Manager } from "socket.io-client";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
 import {startGame, startQuestion, endQuestion, endGame} from "/script.js";
@@ -64,8 +64,12 @@ socket.on("startQuestion",(question)=>{
     startQuestion(question);
 });
 
-socket.on("endQuestion",(corA,roundNum,p1score,p2score)=>{
-    endQuestion(corA,roundNum,p1score,p2score);
+socket.on("endQuestion",(type,corA,roundNum,p1score,p2score)=>{
+    endQuestion(type,corA,roundNum,p1score,p2score);
+    aSelected = true;
+    aButtons.forEach(value => {
+        value.className = "aClicked";
+    })
 })
 
 

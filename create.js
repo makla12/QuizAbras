@@ -1,16 +1,18 @@
-import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+import { Manager } from "socket.io-client";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
 import {startGame, startQuestion, endQuestion, endGame} from "/script.js";
-
+const aButtons = document.querySelectorAll(".a");
+let aSelected = false;
 
 socket.on("connect",() => {
     console.log("Connected!");
 });
 
 const questionAmount = document.getElementById("questionAmount");
+const questionCategory = document.getElementById("questionCategory");
 document.getElementById("createGame").addEventListener("click", () => {
-    socket.emit("createGame", Number(questionAmount.value));
+    socket.emit("createGame", Number(questionAmount.value), Number(questionCategory.value));
 });
 
 let room = -1;
@@ -57,13 +59,16 @@ socket.on("startQuestion",(question)=>{
     startQuestion(question);
 });
 
-socket.on("endQuestion",(corA,roundNum,p1score,p2score)=>{
-    endQuestion(corA,roundNum,p1score,p2score);
+socket.on("endQuestion",(type,corA,roundNum,p1score,p2score)=>{
+    endQuestion(type,corA,roundNum,p1score,p2score);
+    aSelected = true;
+    aButtons.forEach(value => {
+        value.className = "aClicked";
+    })
 });
 
 
-const aButtons = document.querySelectorAll(".a");
-let aSelected = false;
+
 
 aButtons.forEach(value => {
     value.addEventListener("click", ()=>{
