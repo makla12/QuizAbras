@@ -24,13 +24,13 @@
     </div>
 
     <div id="score" style="display: none;">
-        <h1>Round <span id="round">1</span></h1>
+        <h1>Runda <span id="round">1</span></h1>
         <div class="section flexCenter" style="width: 20vw;">
-            <h1>Player 1</h1>
+            <h1>Gracz 1</h1>
             <span id="p1score" style="font-size: xx-large; color: green;">0</span>
         </div>
         <div class="section flexCenter" style="width: 20vw;">
-            <h1>Player 2</h1>
+            <h1>Gracz 2</h1>
             <span id="p2score" style="font-size: xx-large; color: red;">0</span>
         </div>
     </div>
@@ -39,30 +39,32 @@
         <h1><span id="endRes" >YOU WIN</span></h1>
         <div style="display: flex; gap: 20vw;">
             <div class="section flexCenter" style="width: 20vw;">
-                <h1>Player 1</h1>
+                <h1>Gracz 1</h1>
                 <span id="p1scoreEnd" style="font-size: xx-large; color: green;">0</span>
             </div>
             <div class="section flexCenter" style="width: 20vw;">
-                <h1>Player 2</h1>
+                <h1>Gracz 2</h1>
                 <span id="p2scoreEnd" style="font-size: xx-large; color: red;">0</span>
             </div>
         </div>
-        <div class="button create-button" style="padding: 1rem;" onclick="window.location = 'index'">Main menu</div>
+        <div class="button create-button" style="padding: 1rem;" onclick="window.location = 'index'">Menu główne</div>
     </div>
 
     <div class="section" id="createSection">
         <div id="waitingForPlayer" style="display: none;">
-            <h1>Your Room ID:</h1><br>
+            <h1>ID pokoju:</h1><br>
             <span id="roomId"></span>
         </div>
         
         <div id="creatorFirst">
 
             <div class="create-banner">
-                <h1>Create a game!</h1>
+                <h1>Stwórz grę!</h1>
             </div>
             <div class="buttons">
+                <div>Ilość pytań:</div>
                 <input type="number" id="questionAmount" class="insert qAmount-creator" style="font-size: 1.5rem; color: white;  text-shadow: 1px 1px 2px #000000; text-align: center;">
+                <div>Kategoria pytań:</div>
                 <select id="questionCategory">
                     <option value="0">Wszystkie</option>
                     <option value="1">Nauka</option>
@@ -76,7 +78,7 @@
                     <option value="9">Sztuka</option>
                     <option value="10">Matematyka</option>
                 </select>
-                <button id="createGame" class="button creator-button">Create game!</button>
+                <button id="createGame" class="button creator-button">Stwórz grę</button>
             </div>
         </div>
         <script type="module" src="create.js"></script>

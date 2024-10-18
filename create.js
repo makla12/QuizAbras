@@ -1,4 +1,4 @@
-import { Manager } from "socket.io-client";
+import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
 import {startGame, startQuestion, endQuestion, endGame} from "/script.js";
@@ -34,15 +34,15 @@ socket.on("endGame", (statusCode, arr)=>{
     }
     else if(statusCode == 0){
         if(arr[1] > arr[2]){
-            document.getElementById("endRes").innerHTML = "YOU WIN";
+            document.getElementById("endRes").innerHTML = "WYGRAŁEŚ";
             document.getElementById("endRes").style.color = "green";
         }
         else if(arr[1] < arr[2]){
-            document.getElementById("endRes").innerHTML = "YOU LOSE";
+            document.getElementById("endRes").innerHTML = "PRZEGRAŁEŚ";
             document.getElementById("endRes").style.color = "red";
         }
         else{
-            document.getElementById("endRes").innerHTML = "DRAW";
+            document.getElementById("endRes").innerHTML = "REMIS";
             document.getElementById("endRes").style.color = "gray";
         }
         endGame(arr[0],arr[1],arr[2]);

@@ -1,4 +1,4 @@
-import { Manager } from "socket.io-client";
+import { Manager } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 const menager = new Manager(window.location.host + ":8080");
 const socket = menager.socket("/");
 import {startGame, startQuestion, endQuestion, endGame} from "/script.js";
